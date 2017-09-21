@@ -17,35 +17,53 @@ public class List<E extends Comparable> implements ListInterface<E>{
         }
 
     }
+    
+    private int size;
+    private Node currentNode;
+    
+    List() {
+    	size = 0;
+    	currentNode = null;
+    }
 
     @Override
     public boolean isEmpty() {
-        return false;
+    	boolean status = (size == 0) ? true : false;
+    	return status;
     }
 
     @Override
     public ListInterface<E> init() {
-        return null;
+    	size = 0;
+        return this;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public ListInterface<E> insert(E d) {
-        return null;
+    	Node newNode = new Node(d, currentNode, null);
+    	if(!this.isEmpty()) {
+    		currentNode.next = newNode;
+    	}
+    	currentNode = newNode;
+    	size++;
+        return this;
     }
 
     @Override
     public E retrieve() {
-        return null;
+        return currentNode.data;
     }
 
     @Override
     public ListInterface<E> remove() {
-        return null;
+    	currentNode.prior.next = null;
+    	currentNode = currentNode.prior;
+        return this;
     }
 
     @Override
