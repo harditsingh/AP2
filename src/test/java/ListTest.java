@@ -56,6 +56,7 @@ public class ListTest {
         // Add 200 items to the list.
         for (int i = 0; i < 200; i++) {
             list.insert(new Letter('a'));
+            System.out.println(i);
         }
         assertEquals("Adding many elements should result in a long list", 201, list.size());
 
