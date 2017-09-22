@@ -23,4 +23,13 @@ public class Identifier implements IdentifierInterface {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public boolean compareName(String name) {
+		if(this.name.equals(name)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }

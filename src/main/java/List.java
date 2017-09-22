@@ -90,15 +90,18 @@ public class List<E extends Comparable> implements ListInterface<E>{
 		}
 		else {
 			if(currentNode.equals(firstNode)) {
-				currentNode.next.next = currentNode.next;
+				currentNode.next.prior = currentNode.prior;
 				currentNode = currentNode.next;
+				firstNode = currentNode;
 			}
 			else if(currentNode.equals(lastNode)) {
 				currentNode.prior.next = currentNode.next;
 				currentNode = currentNode.prior;
+				lastNode = currentNode;
 			}
 			else {
 				currentNode.prior.next = currentNode.next;
+				currentNode.next.prior = currentNode.prior;
 				currentNode = currentNode.next;
 			}
 		}
@@ -183,4 +186,6 @@ public class List<E extends Comparable> implements ListInterface<E>{
 
 		return newList;
 	}
+	
+	
 }
