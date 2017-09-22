@@ -119,12 +119,12 @@ public class SetResources {
 		System.out.println("Set not found!");
 	}
 
-	public void add(String next, String next2) {
+	public void union(String next, String next2) {
 		for(Identifier key1: mainHashMap.keySet()){
 			if(key1.compareName(next)) {
 				for(Identifier key2: mainHashMap.keySet()){
 					if(key2.compareName(next2)) {
-						mainHashMap.get(key1).add(mainHashMap.get(key2));
+						mainHashMap.get(key1).union(mainHashMap.get(key2)).printSet();
 						return;
 					}
 				}
@@ -136,12 +136,28 @@ public class SetResources {
 		
 	}
 
-	public void subtract(String next, String next2) {
+	public void complement(String next, String next2) {
 		for(Identifier key1: mainHashMap.keySet()){
 			if(key1.compareName(next)) {
 				for(Identifier key2: mainHashMap.keySet()){
 					if(key2.compareName(next2)) {
-						mainHashMap.get(key1).subtract(mainHashMap.get(key2));
+						mainHashMap.get(key1).complement(mainHashMap.get(key2)).printSet();
+						return;
+					}
+				}
+				return;
+			}
+		}
+		
+		System.out.println("Set not found!");
+	}
+	
+	public void intersection(String next, String next2) {
+		for(Identifier key1: mainHashMap.keySet()){
+			if(key1.compareName(next)) {
+				for(Identifier key2: mainHashMap.keySet()){
+					if(key2.compareName(next2)) {
+						mainHashMap.get(key1).intersection(mainHashMap.get(key2)).printSet();
 						return;
 					}
 				}

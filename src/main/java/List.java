@@ -180,9 +180,9 @@ public class List<E extends Comparable> implements ListInterface<E>{
 
 		this.goToFirst();
 
-		while(this.goToNext()) {
+		do {
 			newList.insert(this.retrieve());
-		}
+		} while(this.goToNext());
 
 		return newList;
 	}

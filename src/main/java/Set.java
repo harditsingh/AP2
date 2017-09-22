@@ -11,33 +11,59 @@ public class Set<E extends Comparable> implements SetInterface<E> {
 			mainList.insert(element);
 		}
 	}
+	
+	private Set(List<E> inputList) {
+		mainList = inputList;
+	}
 
 	private List<E> returnList() {
 		return mainList;
 	}
 
-	public void add(Set<E> newSet) {
-		List<E> newList = newSet.returnList();
-
-		newList.goToFirst();
+	public Set<E> union(Set<E> setIn) {
+		List<E> listIn = setIn.returnList();
+		List<E> tempList = (List<E>) mainList.copy();
+		
+		listIn.goToFirst();
 
 		do {
-			if(!mainList.find(newList.retrieve())) {
-				mainList.insert(newList.retrieve());
+			if(!tempList.find(listIn.retrieve())) {
+				tempList.insert(listIn.retrieve());
 			}
-		} while(newList.goToNext());
+		} while(listIn.goToNext());
+		
+		return new Set<E>(tempList);
 	}
 
-	public void subtract(Set<E> newSet) {
-		List<E> newList = newSet.returnList();
-
-		newList.goToFirst();
+	public Set<E> complement(Set<E> setIn) {
+		List<E> listIn = setIn.returnList();
+		List<E> tempList = (List<E>) mainList.copy();
+		
+		listIn.goToFirst();
 
 		do {
-			if(mainList.find(newList.retrieve())) {
-				mainList.remove();
+			if(tempList.find(listIn.retrieve())) {
+				tempList.remove();
 			}
-		} while(newList.goToNext());
+		} while(listIn.goToNext());
+		
+		return new Set<E>(tempList);
+	}
+	
+	public Set<E> intersection(Set<E> setIn) {
+		List<E> listIn = setIn.returnList();
+		List<E> tempList = (List<E>) mainList.copy();
+		
+		mainList.goToFirst();
+		
+		do {
+			if(!listIn.find(mainList.retrieve())) {
+				tempList.find(mainList.retrieve());
+				tempList.remove();
+			}
+		} while(mainList.goToNext());
+		
+		return new Set<E>(tempList);
 	}
 
 

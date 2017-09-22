@@ -26,10 +26,13 @@ public class Main {
 				resources.printSet(consoleInput.next());
 			}
 			else if(line.equals("add")) {
-				resources.add(consoleInput.next(), consoleInput.next());
+				resources.union(consoleInput.next(), consoleInput.next());
 			}
 			else if(line.equals("sub")) {
-				resources.subtract(consoleInput.next(), consoleInput.next());
+				resources.complement(consoleInput.next(), consoleInput.next());
+			}
+			else if(line.equals("inter")) {
+				resources.intersection(consoleInput.next(), consoleInput.next());
 			}
 
 		}
