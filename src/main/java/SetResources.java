@@ -70,7 +70,8 @@ public class SetResources {
 
 	}*/
 
-	void setValueHandler(String identifierName, String setData) {	//This function changes values of Set in HashMap, or creates a new Set if t doesn't exist
+
+	Set dataToSet(String setData) {
 		String dataType = "Unknown";
 		Set newSet = null;
 
@@ -79,8 +80,8 @@ public class SetResources {
 			Scanner dataScanner = new Scanner(setData);
 			dataScanner.useDelimiter(" |\n|\r|\n\r");
 			ArrayList<Integer> elementList = new ArrayList<Integer>();
-			
-			
+
+
 			while(dataScanner.hasNext()) {
 				elementList.add(dataScanner.nextInt());
 			}
@@ -92,22 +93,29 @@ public class SetResources {
 			Scanner dataScanner = new Scanner(setData);
 			dataScanner.useDelimiter(" |\n|\r|\n\r");
 			ArrayList<String> elementList = new ArrayList<String>();
-			
-			
+
+
 			while(dataScanner.hasNext()) {
 				elementList.add(dataScanner.next());
 			}
-			
+
 			String[] a = new String[elementList.size()];			
 			newSet = new Set<String>(elementList.toArray(a));
 		}
+
+		return newSet;
+	}
+
+
+	void setStore(String identifierName, Set newSet) {	//This function changes values of Set in HashMap, or creates a new Set if t doesn't exist
+		String dataType = "Unknown";
 
 		Identifier newIdentifier = new Identifier(identifierName, dataType);
 
 		mainHashMap.put(newIdentifier, newSet);
 	}
 
-	
+
 	void printSet(String identifierName) {
 		for(Identifier key: mainHashMap.keySet()){
 			if(key.compareName(identifierName)) {
@@ -115,7 +123,7 @@ public class SetResources {
 				return;
 			}
 		}
-		
+
 		System.out.println("Set not found!");
 	}
 
@@ -131,9 +139,9 @@ public class SetResources {
 				return;
 			}
 		}
-		
+
 		System.out.println("Set not found!");
-		
+
 	}
 
 	public void complement(String next, String next2) {
@@ -148,10 +156,10 @@ public class SetResources {
 				return;
 			}
 		}
-		
+
 		System.out.println("Set not found!");
 	}
-	
+
 	public void intersection(String next, String next2) {
 		for(Identifier key1: mainHashMap.keySet()){
 			if(key1.compareName(next)) {
@@ -164,7 +172,7 @@ public class SetResources {
 				return;
 			}
 		}
-		
+
 		System.out.println("Set not found!");
 	}
 
@@ -180,10 +188,33 @@ public class SetResources {
 				return;
 			}
 		}
-		
+
 		System.out.println("Set not found!");
 	}
-	
-	
-	
+
+	public Set processEBNF(String data) {
+		Scanner dataScanner = new Scanner(data);
+		dataScanner.useDelimiter("\\s+");
+		Set returnableSet = null;
+		
+		while(dataScanner.hasNext()) {
+			String current;
+			
+			
+			if(dataScanner.hasNext("{*")) {
+				System.out.println("HERE WE GO!");
+				dataScanner.useDelimiter("}");
+				System.out.println(dataScanner.next());
+				dataScanner.useDelimiter("\\s+");
+			}
+			else {
+				System.out.println(dataScanner.next());
+			}
+		}
+
+		return null;
+	}
+
+
+
 }
