@@ -168,7 +168,21 @@ public class SetResources {
 		System.out.println("Set not found!");
 	}
 
-	
+	public void symmetricDifference(String next, String next2) {
+		for(Identifier key1: mainHashMap.keySet()){
+			if(key1.compareName(next)) {
+				for(Identifier key2: mainHashMap.keySet()){
+					if(key2.compareName(next2)) {
+						mainHashMap.get(key1).symmetricDiffence(mainHashMap.get(key2)).printSet();
+						return;
+					}
+				}
+				return;
+			}
+		}
+		
+		System.out.println("Set not found!");
+	}
 	
 	
 	

@@ -65,6 +65,14 @@ public class Set<E extends Comparable> implements SetInterface<E> {
 		
 		return new Set<E>(tempList);
 	}
+	
+	
+	public Set<E> symmetricDiffence(Set<E> setIn) {
+		Set<E> tempSet = union(setIn);
+		tempSet = tempSet.complement(intersection(setIn));
+		
+		return tempSet;
+	}
 
 
 	public void printSet() {

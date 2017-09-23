@@ -34,6 +34,9 @@ public class Main {
 			else if(line.equals("inter")) {
 				resources.intersection(consoleInput.next(), consoleInput.next());
 			}
+			else if(line.equals("symdiff")) {
+				resources.symmetricDifference(consoleInput.next(), consoleInput.next());
+			}
 
 		}
 
