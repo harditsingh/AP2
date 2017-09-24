@@ -1,8 +1,8 @@
 
 public class SetScanner {
-	String data;
-	int pointer;
-	String[] delimiter;
+	private String data;
+	private int pointer;
+	private String[] delimiter;
 
 	SetScanner(String data) {
 		this.data = data;
@@ -11,45 +11,72 @@ public class SetScanner {
 		for(int i = 0; i<20; i++) {
 			delimiter[i] = "";
 		}
+		this.useDelimiter(" /\n/\r/=/+/*/-/|");
 	}
 
-	String nextString() {
+	public String nextString() {
 		String newString = "";
 
-		while(pointer<data.length() && notDelimited()) {
-			newString += data.charAt(pointer);
-			pointer++;
+		if(isOperator()) {
+			newString += currentChar();
+			movePointer();
+		}
+		else {
+			while(hasNext() && notDelimited()) {
+				newString += currentChar();
+				movePointer();
+			}
 		}
 		return newString;
 	}
 
-	String nextSet() {
-		String newSet = "";
+	public String getStatement() {
+		String tempString = data.substring(pointer);
+		pointer += tempString.length();
+		return tempString;
+	}
 
-		if(data.charAt(pointer) == '{') {
+	public String nextExpression() {
+		String newString = "";
+		if(data.charAt(pointer) == '(') {
 			pointer++;
-			while(pointer < data.length() && data.charAt(pointer) != '}') {
-				newSet += data.charAt(pointer);
+			while(pointer<data.length() && currentChar() != ')') {
+				newString += data.charAt(pointer);
 				pointer++;
 			}
 		}
+		return newString;
+	}
 
-		Long[] temp = parseNumbers(newSet);
+	public Set nextSet() {
+		String setString = "";
 
+		if(currentChar() == '{') {
+			pointer++;
+			while(pointer < data.length() && currentChar() != '}') {
+				setString += currentChar();
+				pointer++;
+			}
+			pointer++;
+		}
+
+		Long[] temp = parseNumbers(setString);
+
+		Set<Long> newSet = new Set<Long>();
 		for(Long element : temp) {
-			System.out.println(element);
+			newSet.insert(element);
 		}
 
 		return newSet;
 	}
 
-	Long[] parseNumbers(String set) {
+	private Long[] parseNumbers(String set) {
 		SetScanner scanSet = new SetScanner(set);
 		String currentLong = "";
 		Long[] numberArray = new Long[0];
 
 		while(scanSet.hasNext()) {
-			if(!scanSet.returnNextType().equals("Digit")) {
+			if(!scanSet.isDigit()) {//Contradicting statement
 				scanSet.movePointer();
 				if(!currentLong.equals("")) {
 					Long[] tempArray = new Long[numberArray.length + 1];
@@ -65,17 +92,26 @@ public class SetScanner {
 				currentLong += scanSet.currentChar();
 				scanSet.movePointer();
 			}
-
+			scanSet.skipWhiteSpace();
 		}
 
+		if(!currentLong.equals("")) {
+			Long[] tempArray = new Long[numberArray.length + 1];
+			for(int i = 0; i<numberArray.length; i++) {
+				tempArray[i] = numberArray[i];
+			}
+			tempArray[numberArray.length] = Long.parseLong(currentLong);
+			currentLong = "";
+			numberArray = tempArray;
+		}
 		return numberArray;
 	}
 
-	void movePointer() {
+	public void movePointer() {
 		pointer++;
 	}
 
-	String returnNextType() {
+	public String returnNextType() { //Might deprecate this method, if a method is created for eliminating whitespace
 		String type = null;
 
 		if(Character.isAlphabetic(data.charAt(pointer))) {
@@ -109,25 +145,78 @@ public class SetScanner {
 		return type;
 	}
 
+	public boolean isQuestion() {
+		if(currentChar() == '?') {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isEquality() {
+		if(currentChar() == '=') {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isDigit() {
+		if(Character.isDigit(currentChar())) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isAlpha() {
+		if(Character.isAlphabetic(currentChar())) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isSet() {
+		if(currentChar() == '{') {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isParentheses() {
+		if(currentChar() == '(') {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isOperator() {
+		if(currentChar() == '+' || currentChar() == '-' || currentChar() == '*' || currentChar() == '|') {
+			return true;
+		}
+		return false;
+	}
 
 	public char currentChar() {
-		return data.charAt(pointer);
+		if(pointer<data.length()) {
+			char current = data.charAt(pointer);
+			return current;
+		}
+		return (char) -1;
 	}
 
 	boolean hasNext() {
 		if(pointer<data.length()) {
-			return true;
+			if(data.charAt(pointer) != '\n' && data.charAt(pointer) != '\r') {
+				return true;
+			}
 		}
-		else {
-			return false;
-		}
+		return false;
+
 	}
 
 	void useDelimiter(String delimiter) {
 		int i = 0;
 
 		for(int j = 0; j<delimiter.length(); j++) {
-			if(delimiter.charAt(j) != '|') {
+			if(delimiter.charAt(j) != '/') {
 				this.delimiter[i] += delimiter.charAt(j);
 			}
 			else {
@@ -145,6 +234,15 @@ public class SetScanner {
 			}
 		}
 		return true;
+	}
+
+	public void skipWhiteSpace() {
+		while(this.hasNext()) {
+			if(currentChar() != ' ') {
+				break;
+			}
+			pointer++;
+		}
 	}
 
 

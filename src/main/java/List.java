@@ -55,7 +55,7 @@ public class List<E extends Comparable> implements ListInterface<E>{
 			currentNode = newNode;
 		}
 		else if(firstNode.data.compareTo(d) >= 0) {
-			Node newNode = new Node(d, null, currentNode);
+			Node newNode = new Node(d, null, firstNode);
 			firstNode.prior = newNode;
 			firstNode = newNode;
 			currentNode = firstNode;
@@ -68,7 +68,7 @@ public class List<E extends Comparable> implements ListInterface<E>{
 			currentNode = newNode;
 		}
 		else {
-			Node newNode = new Node(d, currentNode, null);
+			Node newNode = new Node(d, lastNode, null);
 			lastNode.next = newNode;
 			lastNode = newNode;
 			currentNode = lastNode;

@@ -2,8 +2,10 @@
 public class Set<E extends Comparable> implements SetInterface<E> {
 	private List<E> mainList;
 
-
-
+	public Set() {
+		mainList = new List<E>();
+	}
+	
 	public Set(E[] setData) {
 		mainList = new List<E>();
 
@@ -16,8 +18,17 @@ public class Set<E extends Comparable> implements SetInterface<E> {
 		mainList = inputList;
 	}
 
-	private List<E> returnList() {
+	public List<E> returnList() {
 		return mainList;
+	}
+	
+	public void insert(E element) {
+		mainList.insert(element);
+	}
+	
+	public void replaceValue(Set newValue) {
+		mainList = newValue.returnList();
+		
 	}
 
 	public Set<E> union(Set<E> setIn) {
