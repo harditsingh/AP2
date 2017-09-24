@@ -47,7 +47,7 @@ public class List<E extends Comparable> implements ListInterface<E>{
 
 	@Override
 	public ListInterface<E> insert(E d) {
-		
+
 		if(this.isEmpty()) {
 			Node newNode = new Node(d, null, null);
 			lastNode = newNode;
@@ -177,15 +177,15 @@ public class List<E extends Comparable> implements ListInterface<E>{
 	public ListInterface<E> copy() {
 		ListInterface<E> newList = new List<E>();
 		newList.init();
+		if(this.size() > 0) {
+			this.goToFirst();
 
-		this.goToFirst();
-
-		do {
-			newList.insert(this.retrieve());
-		} while(this.goToNext());
-
+			do {
+				newList.insert(this.retrieve());
+			} while(this.goToNext());
+		}
 		return newList;
 	}
-	
-	
+
+
 }

@@ -25,7 +25,7 @@ public class Main {
 		consoleInput.close();
 	}
 	
-	private void actualStart() {
+	/*private void actualStart() {
 		Scanner consoleInput = new Scanner(System.in);
 		consoleInput.useDelimiter(" |\n|\r|\n\r");
 
@@ -54,7 +54,7 @@ public class Main {
 //		System.out.println(trial.nextSet());
 		
 	}
-	
+	*/
 	public static void main(String[] argv) {
 		new Main().start();
 	}

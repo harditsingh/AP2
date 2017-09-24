@@ -6,7 +6,7 @@ import java.util.Stack;
 
 public class SetResources {
 
-	private static final String OPERATOR_TOKENS = "+-*|^";
+	private static final String OPERATOR_TOKENS = "+-|*^";
 
 	HashMap<Identifier, Set> mainHashMap;
 
@@ -14,180 +14,10 @@ public class SetResources {
 		mainHashMap = new HashMap<Identifier, Set>();
 	}
 
-	/*void parseLine(String currentLine) {
-		Scanner in = new Scanner(currentLine);
-
-		String name = in.next();
-		String element = in.next();
-		String type;
-
-		if(Character.isDigit(element.charAt(0))) {
-
-		}
-
-		while(in.hasNext()) {
-
-		}
-
-
-
-		while (in.hasNext()) {
-			String newToken = in.next();
-			Scanner stringScanner = new Scanner(newToken);
-
-
-
-			if (newToken.charAt(0) == '?') {
-				stringScanner.useDelimiter("/|?|\n|\r|\n\r");
-				stringScanner.next();
-				String identifier = stringScanner.next();
-
-				for(Identifier key: mainHashMap.keySet()){
-					if(key.compareName(identifier)) {
-						mainHashMap.get(key).printSet();
-						break;
-					}
-				}
-
-			}
-			else if(newToken.charAt(0) == '/') {
-
-			}
-			else if(Character.isLetter(newToken.charAt(0))) {
-				String identifierName = stringScanner.next();
-				stringScanner.useDelimiter(" = {");
-
-				String element = stringScanner.next();
-				stringScanner.useDelimiter(", | ");
-
-				while(element.equals("}")) {
-
-				}
-
-			}
-			else {
-				System.out.println("Error identifying token type");
-			}
-		}
-
-
-	}*/
-
-
-	Set dataToSet(String setData) {
-		String dataType = "Unknown";
-		Set newSet = null;
-
-		if(Character.isDigit(setData.charAt(0))) {
-			dataType = "Number";
-			Scanner dataScanner = new Scanner(setData);
-			dataScanner.useDelimiter(" |\n|\r|\n\r");
-			ArrayList<Integer> elementList = new ArrayList<Integer>();
-
-
-			while(dataScanner.hasNext()) {
-				elementList.add(dataScanner.nextInt());
-			}
-			Integer[] a = new Integer[elementList.size()];
-			newSet = new Set<Integer>(elementList.toArray(a));
-		}
-		else if(Character.isAlphabetic(setData.charAt(0))) {
-			dataType = "Alphabet";
-			Scanner dataScanner = new Scanner(setData);
-			dataScanner.useDelimiter(" |\n|\r|\n\r");
-			ArrayList<String> elementList = new ArrayList<String>();
-
-
-			while(dataScanner.hasNext()) {
-				elementList.add(dataScanner.next());
-			}
-
-			String[] a = new String[elementList.size()];			
-			newSet = new Set<String>(elementList.toArray(a));
-		}
-
-		return newSet;
-	}
-
-
-	void setStore(String identifierName, Set newSet) {	//This function changes values of Set in HashMap, or creates a new Set if t doesn't exist
-		String dataType = "Unknown";
-
-		Identifier newIdentifier = new Identifier(identifierName, dataType);
-
-		mainHashMap.put(newIdentifier, newSet);
-	}
-
-
 	void printSet(String identifierName) {
 		for(Identifier key: mainHashMap.keySet()){
 			if(key.compareName(identifierName)) {
 				mainHashMap.get(key).printSet();
-				return;
-			}
-		}
-
-		System.out.println("Set not found!");
-	}
-
-	public void union(String next, String next2) {
-		for(Identifier key1: mainHashMap.keySet()){
-			if(key1.compareName(next)) {
-				for(Identifier key2: mainHashMap.keySet()){
-					if(key2.compareName(next2)) {
-						mainHashMap.get(key1).union(mainHashMap.get(key2)).printSet();
-						return;
-					}
-				}
-				return;
-			}
-		}
-
-		System.out.println("Set not found!");
-
-	}
-
-	public void complement(String next, String next2) {
-		for(Identifier key1: mainHashMap.keySet()){
-			if(key1.compareName(next)) {
-				for(Identifier key2: mainHashMap.keySet()){
-					if(key2.compareName(next2)) {
-						mainHashMap.get(key1).complement(mainHashMap.get(key2)).printSet();
-						return;
-					}
-				}
-				return;
-			}
-		}
-
-		System.out.println("Set not found!");
-	}
-
-	public void intersection(String next, String next2) {
-		for(Identifier key1: mainHashMap.keySet()){
-			if(key1.compareName(next)) {
-				for(Identifier key2: mainHashMap.keySet()){
-					if(key2.compareName(next2)) {
-						mainHashMap.get(key1).intersection(mainHashMap.get(key2)).printSet();
-						return;
-					}
-				}
-				return;
-			}
-		}
-
-		System.out.println("Set not found!");
-	}
-
-	public void symmetricDifference(String next, String next2) {
-		for(Identifier key1: mainHashMap.keySet()){
-			if(key1.compareName(next)) {
-				for(Identifier key2: mainHashMap.keySet()){
-					if(key2.compareName(next2)) {
-						mainHashMap.get(key1).symmetricDiffence(mainHashMap.get(key2)).printSet();
-						return;
-					}
-				}
 				return;
 			}
 		}
@@ -242,12 +72,12 @@ public class SetResources {
 	public Set processEBNF(String data) {
 		SetScanner in = new SetScanner(data);
 		ArrayList<Token> expression = new ArrayList<Token>();
-
+		in.skipWhiteSpace();
 		// While loop that runs through the string, identifies each character, and fills the ListToken result with tokens
 		while (in.hasNext()) {
 
 			if (in.isAlpha()) {
-				Set tempSet = findSet(in.nextString());
+				Set tempSet = findSet(in.nextString()).copy();
 				if(tempSet != null) {
 					Token<Set> tempToken = new Token<Set>(tempSet, Token.SET_TYPE);
 					expression.add(tempToken);
@@ -285,7 +115,7 @@ public class SetResources {
 		int precedence = 0;
 
 		for (int i = 0; i < OPERATOR_TOKENS.length(); i++) {
-			if(i%2 == 0) {
+			if(i%3 == 0) {
 				precedence++;
 			}
 			if (token.charAt(0) == OPERATOR_TOKENS.charAt(i)) {

@@ -38,12 +38,26 @@ public class SetScanner {
 
 	public String nextExpression() {
 		String newString = "";
+		int parenthesesCounter = 0;
+
 		if(data.charAt(pointer) == '(') {
 			pointer++;
-			while(pointer<data.length() && currentChar() != ')') {
+			while(pointer<data.length()) {
+				if(currentChar() == '(') {
+					parenthesesCounter++;
+				}
+				if(currentChar() == ')') {
+					if(parenthesesCounter > 0) {
+						parenthesesCounter--;	
+					}
+					else {
+						break;
+					}
+				}
 				newString += data.charAt(pointer);
 				pointer++;
 			}
+			movePointer();
 		}
 		return newString;
 	}
