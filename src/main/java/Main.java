@@ -5,7 +5,7 @@ public class Main {
 
 
 	private void start() {
-		Scanner consoleInput = new Scanner(System.in);
+		java.util.Scanner consoleInput = new java.util.Scanner(System.in);
 		
 		while (consoleInput.hasNext()) {
 			String line = consoleInput.nextLine();

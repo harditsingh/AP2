@@ -1,36 +1,44 @@
 
 public class Identifier implements IdentifierInterface {
-	private String name;
-	private String type;
-	
-	Identifier(String name, String type) {
-		this.name = name;
-		this.type = type;
+	private StringBuffer name;
+
+
+
+	Identifier(String name) {
+		this.name = new StringBuffer(name);
+
 	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public String getType() {
-		return type;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public void setType(String type) {
-		this.type = type;
-	}
-	
-	public boolean compareName(String name) {
-		if(this.name.equals(name)) {
-			return true;
-		}
-		else {
+
+	public static boolean validateIdentifier(String name) {
+		Scanner scanner = new Scanner(name);
+		if(!scanner.isAlpha()) {
 			return false;
 		}
+
+		while(scanner.hasNext()) {
+			if(!scanner.isAlpha() && !scanner.isDigit()) {
+				return false;
+			}
+			scanner.movePointer();
+		}
+		return true;
+	}
+
+	//get char
+	public String getName() {
+		return name.toString();
+	}
+
+	public void setName(String name) {
+		this.name = new StringBuffer(name);
+	}
+
+	public boolean compareName(String name) {
+		String tempString = this.name.toString();
+		if(tempString.equals(name)) {
+			return true;
+		}
+		return false;
 	}
 
 }

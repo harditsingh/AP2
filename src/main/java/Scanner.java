@@ -1,10 +1,10 @@
 
-public class SetScanner {
+public class Scanner {
 	private String data;
 	private int pointer;
 	private String[] delimiter;
 
-	SetScanner(String data) {
+	Scanner(String data) {
 		this.data = data;
 		pointer = 0;
 		delimiter = new String[20];
@@ -74,32 +74,20 @@ public class SetScanner {
 			pointer++;
 		}
 
-		Long[] temp = parseNumbers(setString);
-
-		Set<Long> newSet = new Set<Long>();
-		for(Long element : temp) {
-			newSet.insert(element);
-		}
-
-		return newSet;
+		return parseNumbers(setString);
 	}
 
-	private Long[] parseNumbers(String set) {
-		SetScanner scanSet = new SetScanner(set);
+	private Set parseNumbers(String set) {
+		Scanner scanSet = new Scanner(set);
 		String currentLong = "";
-		Long[] numberArray = new Long[0];
-
+		Set<Long> newSet = new Set<Long>();
+		
 		while(scanSet.hasNext()) {
-			if(!scanSet.isDigit()) {//Contradicting statement
+			if(!scanSet.isDigit()) {
 				scanSet.movePointer();
 				if(!currentLong.equals("")) {
-					Long[] tempArray = new Long[numberArray.length + 1];
-					for(int i = 0; i<numberArray.length; i++) {
-						tempArray[i] = numberArray[i];
-					}
-					tempArray[numberArray.length] = Long.parseLong(currentLong);
+					newSet.insert(Long.parseLong(currentLong));
 					currentLong = "";
-					numberArray = tempArray;
 				}
 			}
 			else {
@@ -110,53 +98,15 @@ public class SetScanner {
 		}
 
 		if(!currentLong.equals("")) {
-			Long[] tempArray = new Long[numberArray.length + 1];
-			for(int i = 0; i<numberArray.length; i++) {
-				tempArray[i] = numberArray[i];
-			}
-			tempArray[numberArray.length] = Long.parseLong(currentLong);
+			newSet.insert(Long.parseLong(currentLong));
 			currentLong = "";
-			numberArray = tempArray;
 		}
-		return numberArray;
+		
+		return newSet;
 	}
 
 	public void movePointer() {
 		pointer++;
-	}
-
-	public String returnNextType() { //Might deprecate this method, if a method is created for eliminating whitespace
-		String type = null;
-
-		if(Character.isAlphabetic(data.charAt(pointer))) {
-			type = "String";
-		}
-		else if(Character.isDigit(data.charAt(pointer))) {
-			type = "Digit";
-		}
-		else if(currentChar() == '{') {
-			type = "Set";
-		}
-		else if(currentChar() == '\n' || currentChar() == '\r') {
-			type = "EOL";
-		}
-		else if(currentChar() == '=') {
-			type = "EqualTo";
-		}
-		else if(currentChar() == ' ') {
-			pointer++;
-			if(this.hasNext()) {
-				type = returnNextType();
-			}
-			else {
-				type = "EOL";
-			}
-		}
-		else {
-			type = "Unknown";
-		}
-
-		return type;
 	}
 
 	public boolean isQuestion() {

@@ -1,7 +1,6 @@
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.Stack;
 
 public class SetResources {
@@ -14,15 +13,17 @@ public class SetResources {
 		mainHashMap = new HashMap<Identifier, Set>();
 	}
 
-	void printSet(String identifierName) {
-		for(Identifier key: mainHashMap.keySet()){
-			if(key.compareName(identifierName)) {
-				mainHashMap.get(key).printSet();
-				return;
+	void printSet(Set currentSet) {
+		Set tempSet = new Set(currentSet);
+		
+		while(!tempSet.isEmpty()) {
+			System.out.print(tempSet.retrieve());
+			tempSet.remove();
+			if(!tempSet.isEmpty()) {
+				System.out.print(" ");
 			}
 		}
-
-		System.out.println("Set not found!");
+		System.out.println();
 	}
 
 	private Set findSet(String keyString) {
@@ -42,26 +43,38 @@ public class SetResources {
 				return;
 			}
 		}
-		mainHashMap.put(new Identifier(name, "Unknown"), newValue);		
+		mainHashMap.put(new Identifier(name), newValue);		
 	}
 
 	public void processInput(String data) {
-		SetScanner in = new SetScanner(data);
+		Scanner in = new Scanner(data);
 
 		while(in.hasNext()) {
-			if(in.isAlpha()) {
+			if(in.isAlpha() || in.isDigit()) {
 				String currentSet = in.nextString();
+				if(!Identifier.validateIdentifier(currentSet)) {
+					System.err.println("Identifier \"" + currentSet + "\" is invalid or contains illegal characters, please try again");
+					return;
+				}
 				in.skipWhiteSpace();
 				if(in.isEquality()) {
 					in.movePointer();
 					in.skipWhiteSpace();
-					putValueInMap(currentSet, processEBNF(in.getStatement()));
+					Set answer = processEBNF(in.getStatement());
+					if(answer == null) {
+						return;
+					}
+					putValueInMap(currentSet, answer);
 				}
 			}
 			else if(in.isQuestion()) {
 				in.movePointer();
 				in.skipWhiteSpace();
-				processEBNF(in.getStatement()).printSet();
+				Set answer = processEBNF(in.getStatement());
+				if(answer == null) {
+					return;
+				}
+				printSet(answer);
 			}
 			else {
 				in.movePointer();
@@ -70,18 +83,24 @@ public class SetResources {
 	}
 
 	public Set processEBNF(String data) {
-		SetScanner in = new SetScanner(data);
+		Scanner in = new Scanner(data);
 		ArrayList<Token> expression = new ArrayList<Token>();
 		in.skipWhiteSpace();
 		// While loop that runs through the string, identifies each character, and fills the ListToken result with tokens
 		while (in.hasNext()) {
 
 			if (in.isAlpha()) {
-				Set tempSet = findSet(in.nextString()).copy();
-				if(tempSet != null) {
-					Token<Set> tempToken = new Token<Set>(tempSet, Token.SET_TYPE);
-					expression.add(tempToken);
+				String currentSet = in.nextString();
+				Set requiredSet = findSet(currentSet);
+				
+				if(requiredSet == null) {
+					System.err.println("Set \"" + currentSet + "\" not found in database!");
+					return null;
 				}
+				
+				Set tempSet = new Set(requiredSet);				
+				Token<Set> tempToken = new Token<Set>(tempSet, Token.SET_TYPE);
+				expression.add(tempToken);
 			} 
 			else if (in.isOperator()) {
 				String operator = in.nextString();
@@ -99,8 +118,8 @@ public class SetResources {
 				expression.add(tempToken);
 			}
 			else {
-				System.out.println("Error identifying token type");
-				in.movePointer();
+				System.err.println("Invalid input, try again!");
+				return null;
 			}
 
 			in.skipWhiteSpace();
