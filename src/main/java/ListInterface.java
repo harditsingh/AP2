@@ -1,3 +1,4 @@
+
 /**	@elements : objects of type E
  *	@structure : linear
  *	@domain : 	The elements in the list are sorted monotonically increasing.

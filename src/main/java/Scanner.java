@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 
 public class Scanner {
 	private String data;
@@ -79,27 +80,27 @@ public class Scanner {
 
 	private Set parseNumbers(String set) {
 		Scanner scanSet = new Scanner(set);
-		String currentLong = "";
-		Set<Long> newSet = new Set<Long>();
+		String currentBigInteger = "";
+		Set<BigInteger> newSet = new Set<BigInteger>();
 		
 		while(scanSet.hasNext()) {
 			if(!scanSet.isDigit()) {
 				scanSet.movePointer();
-				if(!currentLong.equals("")) {
-					newSet.insert(Long.parseLong(currentLong));
-					currentLong = "";
+				if(!currentBigInteger.equals("")) {
+					newSet.insert(new BigInteger(currentBigInteger));
+					currentBigInteger = "";
 				}
 			}
 			else {
-				currentLong += scanSet.currentChar();
+				currentBigInteger += scanSet.currentChar();
 				scanSet.movePointer();
 			}
 			scanSet.skipWhiteSpace();
 		}
 
-		if(!currentLong.equals("")) {
-			newSet.insert(Long.parseLong(currentLong));
-			currentLong = "";
+		if(!currentBigInteger.equals("")) {
+			newSet.insert(new BigInteger(currentBigInteger));
+			currentBigInteger = "";
 		}
 		
 		return newSet;
