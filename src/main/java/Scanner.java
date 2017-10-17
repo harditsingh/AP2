@@ -124,11 +124,11 @@ public class Scanner {
 		Set<BigInteger> newSet = new Set<BigInteger>();
 		boolean readingDigit = true;
 		boolean commaEncountered = false;
-		
+
 		scanSet.skipWhiteSpace();
 		while(scanSet.hasNext()) {
 			if(readingDigit) {
-				
+
 				if(scanSet.isDigit()) {
 					currentBigInteger += scanSet.currentChar();
 					if(scanSet.currentChar() == '0' && currentBigInteger.equals("0")) {
@@ -160,6 +160,12 @@ public class Scanner {
 				}
 				else if(scanSet.currentChar() == ' ') {
 					scanSet.skipWhiteSpace();
+					if(!currentBigInteger.equals("")) {
+						newSet.insert(new BigInteger(currentBigInteger));
+						currentBigInteger = "";	
+					}
+					readingDigit = false;
+					commaEncountered = true;
 				}
 				else {
 					throw new APException("Invalid Character!");
@@ -174,7 +180,7 @@ public class Scanner {
 					break;
 				}
 				else {
-					throw new APException("No comma present after zero!");
+					throw new APException("No comma present!");
 				}
 
 				if(scanSet.isDigit()) {

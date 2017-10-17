@@ -6,7 +6,7 @@ public class Main {
 	private void start() {
 		java.util.Scanner consoleInput = new java.util.Scanner(System.in);
 
-		while (consoleInput.hasNext()) {
+		while (consoleInput.hasNextLine()) {
 			String line = consoleInput.nextLine();
 
 			if(line.equals("exit")) {
