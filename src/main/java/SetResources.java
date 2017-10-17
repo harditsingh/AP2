@@ -27,14 +27,13 @@ public class SetResources {
 		System.out.println();
 	}
 
-	private Set findSet(String keyString) {
+	private Set findSet(String keyString) throws APException {
 		for(Identifier key: mainHashMap.keySet()){
 			if(key.compareName(keyString)) {
 				return mainHashMap.get(key);
 			}
 		}
-
-		return null;
+		throw new APException("Set \"" + keyString + "\" not found in database!");
 	}
 
 	private void putValueInMap(String name,Set newValue) {
@@ -47,80 +46,93 @@ public class SetResources {
 		mainHashMap.put(new Identifier(name), newValue);		
 	}
 
-	public void processInput(String data) {
+	public void processInput(String data) throws APException {
 		Scanner in = new Scanner(data);
 
 		while(in.hasNext()) {
-			if(in.isAlpha() || in.isDigit()) {
+			if(in.isAlpha() || in.isDigit()) {//identifier not working properly
 				String currentSet = in.nextString();
-				if(!Identifier.validateIdentifier(currentSet)) {
-					System.err.println("Identifier \"" + currentSet + "\" is invalid or contains illegal characters, please try again");
-					return;
-				}
+				Identifier.validateIdentifier(currentSet);
 				in.skipWhiteSpace();
 				if(in.isEquality()) {
 					in.movePointer();
 					in.skipWhiteSpace();
-					Set answer = processEBNF(in.getStatement());
-					if(answer == null) {
-						return;
+					String statement = in.getStatement();
+					if(statement.equals("")) {
+						throw new APException("Incomplete statement!");//check this, apparently q= with space after it doesn't
 					}
+					Set answer = processEBNF(statement);
 					putValueInMap(currentSet, answer);
+				}
+				else {
+					throw new APException("Equality sign expected!");
 				}
 			}
 			else if(in.isQuestion()) {
 				in.movePointer();
 				in.skipWhiteSpace();
-				Set answer = processEBNF(in.getStatement());
-				if(answer == null) {
-					return;
+				String statement = in.getStatement();
+				if(statement.equals("")) {
+					throw new APException("Incomplete Statement!");//check this, apparently q= with space after it doesn't
 				}
+				Set answer = processEBNF(statement);
 				printSet(answer);
 			}
 			else {
-				in.movePointer();
+				throw new APException("Incorrect syntax!");
 			}
 		}
 	}
 
-	public Set processEBNF(String data) {
+	public Set processEBNF(String data) throws APException {
 		Scanner in = new Scanner(data);
 		ArrayList<Token> expression = new ArrayList<Token>();
 		in.skipWhiteSpace();
+		boolean operatorExpected = false;
 		// While loop that runs through the string, identifies each character, and fills the ListToken result with tokens
 		while (in.hasNext()) {
 
 			if (in.isAlpha()) {
-				String currentSet = in.nextString();
-				Set requiredSet = findSet(currentSet);
-				
-				if(requiredSet == null) {
-					System.err.println("Set \"" + currentSet + "\" not found in database!");
-					return null;
+				if(operatorExpected) {
+					throw new APException("Operator Expected!");
 				}
-				
+				String currentSet = in.nextString();
+				Identifier.validateIdentifier(currentSet);
+				Set requiredSet = findSet(currentSet);
 				Set tempSet = new Set(requiredSet);				
 				Token<Set> tempToken = new Token<Set>(tempSet, Token.SET_TYPE);
 				expression.add(tempToken);
+				operatorExpected = true;
 			} 
 			else if (in.isOperator()) {
+				if(!operatorExpected) {
+					throw new APException("Unxpected Operator!");
+				}
 				String operator = in.nextString();
 				Token<String> tempToken = new Token<String>(operator, Token.OPERATOR_TYPE, setPrecedence(operator));
 				expression.add(tempToken);
+				operatorExpected = false;
 			} 
 			else if(in.isSet()) {
+				if(operatorExpected) {
+					throw new APException("Operator Expected!");
+				}
 				Set tempSet = in.nextSet();
 				Token<Set> tempToken = new Token<Set>(tempSet, Token.SET_TYPE);
 				expression.add(tempToken);
+				operatorExpected = true;
 			}
 			else if (in.isParentheses()) {
+				if(operatorExpected) {
+					throw new APException("Operator Expected!");
+				}
 				Set tempSet = processEBNF(in.nextExpression());
 				Token<Set> tempToken = new Token<Set>(tempSet, Token.SET_TYPE);
 				expression.add(tempToken);
+				operatorExpected = true;
 			}
 			else {
-				System.err.println("Invalid input, try again!");
-				return null;
+				throw new APException("Invalid input, try again!");
 			}
 
 			in.skipWhiteSpace();
@@ -146,7 +158,7 @@ public class SetResources {
 		return 0;
 	}
 
-	private Set rpnProcessor(ArrayList<Token> expression) {
+	private Set rpnProcessor(ArrayList<Token> expression) throws APException {
 		Stack<Set> operationStack = new Stack<Set>();
 
 		for(int i = 0; i < expression.size(); i++) {
@@ -166,8 +178,7 @@ public class SetResources {
 			return operationStack.peek();
 		}
 		else {
-			System.err.println(" Invalid input, remaining tokens on stack.");
-			return null;
+			throw new APException("Invalid input, remaining tokens on stack!");
 		}
 	}
 

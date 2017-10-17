@@ -9,15 +9,15 @@ public class Identifier implements IdentifierInterface {
 
 	}
 
-	public static boolean validateIdentifier(String name) {
+	public static boolean validateIdentifier(String name) throws APException {
 		Scanner scanner = new Scanner(name);
 		if(!scanner.isAlpha()) {
-			return false;
+			throw new APException("Identifier \"" + name + "\" is invalid or contains illegal characters, please try again");
 		}
 
 		while(scanner.hasNext()) {
 			if(!scanner.isAlpha() && !scanner.isDigit()) {
-				return false;
+				throw new APException("Identifier \"" + name + "\" is invalid or contains illegal characters, please try again");
 			}
 			scanner.movePointer();
 		}

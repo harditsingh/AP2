@@ -15,6 +15,32 @@ public class Scanner {
 		this.useDelimiter(" /\n/\r/=/+/*/-/|");
 	}
 
+	private void removeNewLines() {
+		String temp = "";
+		for(int i = 0; i<data.length(); i++) {
+			if(data.charAt(i) == '\n' || data.charAt(i) == '\r') {
+				temp += '.';
+			}
+			else {
+				temp += data.charAt(i);
+			}
+		}
+		data = temp;
+	}
+
+	private void toLowercase() {
+		String temp = "";
+		for(int i = 0; i<data.length(); i++) {
+			if(Character.isUpperCase(data.charAt(i))) {
+				temp += Character.toLowerCase(data.charAt(i));
+			}
+			else {
+				temp += data.charAt(i);
+			}
+		}
+		data = temp;
+	}
+
 	public String nextString() {
 		String newString = "";
 
@@ -37,11 +63,12 @@ public class Scanner {
 		return tempString;
 	}
 
-	public String nextExpression() {
+	public String nextExpression() throws APException {
 		String newString = "";
 		int parenthesesCounter = 0;
 
-		if(data.charAt(pointer) == '(') {
+		if(data.charAt(pointer) == '(') {//11 3 is not a valid number, so stop skipping white spaces when reading a number
+			parenthesesCounter++;
 			pointer++;
 			while(pointer<data.length()) {
 				if(currentChar() == '(') {
@@ -50,6 +77,9 @@ public class Scanner {
 				if(currentChar() == ')') {
 					if(parenthesesCounter > 0) {
 						parenthesesCounter--;	
+						if(parenthesesCounter == 0) {
+							break;
+						}
 					}
 					else {
 						break;
@@ -60,10 +90,13 @@ public class Scanner {
 			}
 			movePointer();
 		}
+		if(parenthesesCounter != 0) {
+			throw new APException("Error: Missing Parentheses!");
+		}
 		return newString;
 	}
 
-	public Set nextSet() {
+	public Set nextSet() throws APException {
 		String setString = "";
 
 		if(currentChar() == '{') {
@@ -72,37 +105,94 @@ public class Scanner {
 				setString += currentChar();
 				pointer++;
 			}
-			pointer++;
+			if(currentChar() == '}') {
+				pointer++;
+			}
+			else {
+				throw new APException("The set is incorrect!");
+			}
 		}
+
+		setString += "e";
 
 		return parseNumbers(setString);
 	}
 
-	private Set parseNumbers(String set) {
+	private Set parseNumbers(String set) throws APException {
 		Scanner scanSet = new Scanner(set);
 		String currentBigInteger = "";
 		Set<BigInteger> newSet = new Set<BigInteger>();
+		boolean readingDigit = true;
+		boolean commaEncountered = false;
 		
+		scanSet.skipWhiteSpace();
 		while(scanSet.hasNext()) {
-			if(!scanSet.isDigit()) {
-				scanSet.movePointer();
-				if(!currentBigInteger.equals("")) {
-					newSet.insert(new BigInteger(currentBigInteger));
-					currentBigInteger = "";
+			if(readingDigit) {
+				
+				if(scanSet.isDigit()) {
+					currentBigInteger += scanSet.currentChar();
+					if(scanSet.currentChar() == '0' && currentBigInteger.equals("0")) {
+						newSet.insert(new BigInteger(currentBigInteger));
+						currentBigInteger = "";
+						readingDigit = false;
+						commaEncountered = true;
+					}
+					scanSet.movePointer();
+				}
+				else if(scanSet.isComma()) {
+					if(!currentBigInteger.equals("")) {
+						newSet.insert(new BigInteger(currentBigInteger));
+						currentBigInteger = "";
+						readingDigit = false;
+						commaEncountered = true;
+					}
+					else {
+						throw new APException("No digit present before comma!");
+					}
+				}
+				else if(scanSet.currentChar() == 'e') {
+					if(!currentBigInteger.equals("")) {
+						newSet.insert(new BigInteger(currentBigInteger));
+						currentBigInteger = "";
+					}
+					readingDigit = false;
+					break;
+				}
+				else if(scanSet.currentChar() == ' ') {
+					scanSet.skipWhiteSpace();
+				}
+				else {
+					throw new APException("Invalid Character!");
 				}
 			}
-			else {
-				currentBigInteger += scanSet.currentChar();
-				scanSet.movePointer();
+			else if(commaEncountered) {
+				if(scanSet.isComma()) {
+					scanSet.movePointer();
+					scanSet.skipWhiteSpace();
+				}
+				else if(scanSet.currentChar() == 'e') {
+					break;
+				}
+				else {
+					throw new APException("No comma present after zero!");
+				}
+
+				if(scanSet.isDigit()) {
+					commaEncountered = false;
+					readingDigit = true;
+				}
+				else if(scanSet.isComma()) {
+					throw new APException("No digit present before comma!");
+				}
+				else if(scanSet.currentChar() == 'e') {
+					throw new APException("Set ends in comma, digit missing!");
+				}
+				else {
+					throw new APException("Invalid Character!");
+				}
 			}
-			scanSet.skipWhiteSpace();
 		}
 
-		if(!currentBigInteger.equals("")) {
-			newSet.insert(new BigInteger(currentBigInteger));
-			currentBigInteger = "";
-		}
-		
 		return newSet;
 	}
 
@@ -112,6 +202,13 @@ public class Scanner {
 
 	public boolean isQuestion() {
 		if(currentChar() == '?') {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isComma() {
+		if(currentChar() == ',') {
 			return true;
 		}
 		return false;
@@ -201,7 +298,9 @@ public class Scanner {
 		return true;
 	}
 
-	public void skipWhiteSpace() {
+
+
+	public void skipWhiteSpace() {//turn into boolean
 		while(this.hasNext()) {
 			if(currentChar() != ' ') {
 				break;
