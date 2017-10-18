@@ -138,6 +138,7 @@ public class Scanner {
 						commaEncountered = true;
 					}
 					scanSet.movePointer();
+					scanSet.skipWhiteSpace();
 				}
 				else if(scanSet.isComma()) {
 					if(!currentBigInteger.equals("")) {
