@@ -5,8 +5,8 @@
  *				the name.
  *	@constructor - Identifier();
  *	<dl>
- *		<dt><b>PRE-conditie</b><dd>		-
- *		<dt><b>POST-conditie</b><dd> 	The new Identifer object has the characters
+ *		<dt><b>PRE-condition</b><dd>		-
+ *		<dt><b>POST-condition</b><dd> 	The new Identifer object has the characters
  *										stored in an object of type StringBuffer.
  * </dl>
  **/

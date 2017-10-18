@@ -7,8 +7,8 @@
  *				   Set(Set<E>): Copy Constructor
  *				   
  *	<dl>
- *		<dt><b>PRE-conditie</b><dd>		-
- *		<dt><b>POST-conditie</b><dd> 	The new SetInterface object initialized and is ready for elements to be inserted.
+ *		<dt><b>PRE-condition</b><dd>		-
+ *		<dt><b>POST-condition</b><dd> 	The new SetInterface object an empty set.
  * </dl>
  **/
 
