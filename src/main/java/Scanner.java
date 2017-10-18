@@ -91,7 +91,7 @@ public class Scanner {
 			movePointer();
 		}
 		if(parenthesesCounter != 0) {
-			throw new APException("Error: Missing Parentheses!");
+			throw new APException("error missing parenthesis");
 		}
 		return newString;
 	}

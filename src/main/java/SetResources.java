@@ -33,7 +33,7 @@ public class SetResources {
 				return mainHashMap.get(key);
 			}
 		}
-		throw new APException("Set \"" + keyString + "\" not found in database!");
+		throw new APException("error undefined variable");
 	}
 
 	private void putValueInMap(String name,Set newValue) {
@@ -48,7 +48,8 @@ public class SetResources {
 
 	public void processInput(String data) throws APException {
 		Scanner in = new Scanner(data);
-
+		in.skipWhiteSpace();
+		
 		while(in.hasNext()) {
 			if(in.isAlpha() || in.isDigit()) {//identifier not working properly
 				String currentSet = in.nextString();
@@ -78,8 +79,11 @@ public class SetResources {
 				Set answer = processEBNF(statement);
 				printSet(answer);
 			}
+			else if(in.currentChar() == '/') {
+				break;
+			}
 			else {
-				throw new APException("Incorrect syntax!");
+				throw new APException("error no statement");
 			}
 		}
 	}
@@ -94,7 +98,7 @@ public class SetResources {
 
 			if (in.isAlpha()) {
 				if(operatorExpected) {
-					throw new APException("Operator Expected!");
+					throw new APException("error no end of line");
 				}
 				String currentSet = in.nextString();
 				Identifier.validateIdentifier(currentSet);
@@ -132,7 +136,7 @@ public class SetResources {
 				operatorExpected = true;
 			}
 			else {
-				throw new APException("Invalid input, try again!");
+				throw new APException("error no end of line");
 			}
 
 			in.skipWhiteSpace();

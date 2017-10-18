@@ -12,18 +12,18 @@ public class Main {
 			if(line.equals("exit")) {
 				break;
 			}
-			else if(line.startsWith("/")) {
-				continue;
-			}
+//			else if(line.startsWith("/")) {
+//				continue;
+//			}
 			else if(line.equals("")) {
-				System.err.println("No statement!");
+				System.out.println("error no statement");
 			}
 			else {
 				try {
 					resources.processInput(line);
 				}
 				catch(APException e) {
-					System.err.println(e.getMessage());
+					System.out.println(e.getMessage());
 				}
 			}
 		}
