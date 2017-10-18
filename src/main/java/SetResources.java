@@ -1,5 +1,4 @@
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
@@ -8,14 +7,14 @@ public class SetResources {
 
 	private static final String OPERATOR_TOKENS = "+-|*^";
 
-	HashMap<Identifier, Set> mainHashMap;
+	HashMap<Identifier, Set<?>> mainHashMap;
 
 	SetResources() {
-		mainHashMap = new HashMap<Identifier, Set>();
+		mainHashMap = new HashMap<Identifier, Set<?>>();
 	}
 
-	void printSet(Set currentSet) {
-		Set tempSet = new Set(currentSet);
+	void printSet(Set<?> currentSet) {
+		Set<?> tempSet = new Set<>(currentSet);
 		
 		while(!tempSet.isEmpty()) {
 			System.out.print(tempSet.retrieve());
@@ -27,7 +26,7 @@ public class SetResources {
 		System.out.println();
 	}
 
-	private Set findSet(String keyString) throws APException {
+	private Set<?> findSet(String keyString) throws APException {
 		for(Identifier key: mainHashMap.keySet()){
 			if(key.compareName(keyString)) {
 				return mainHashMap.get(key);
@@ -51,7 +50,7 @@ public class SetResources {
 		in.skipWhiteSpace();
 		
 		while(in.hasNext()) {
-			if(in.isAlpha() || in.isDigit()) {//identifier not working properly
+			if(in.isAlpha() || in.isDigit()) {
 				String currentSet = in.nextString();
 				IdentifierInterface.validateIdentifier(currentSet);
 				in.skipWhiteSpace();
@@ -60,9 +59,9 @@ public class SetResources {
 					in.skipWhiteSpace();
 					String statement = in.getStatement();
 					if(statement.equals("")) {
-						throw new APException("Incomplete statement!");//check this, apparently q= with space after it doesn't
+						throw new APException("Incomplete statement!");
 					}
-					Set answer = processEBNF(statement);
+					Set<?> answer = processEBNF(statement);
 					putValueInMap(currentSet, answer);
 				}
 				else {
@@ -74,9 +73,9 @@ public class SetResources {
 				in.skipWhiteSpace();
 				String statement = in.getStatement();
 				if(statement.equals("")) {
-					throw new APException("Incomplete Statement!");//check this, apparently q= with space after it doesn't
+					throw new APException("Incomplete Statement!");
 				}
-				Set answer = processEBNF(statement);
+				Set<?> answer = processEBNF(statement);
 				printSet(answer);
 			}
 			else if(in.currentChar() == '/') {
@@ -88,12 +87,12 @@ public class SetResources {
 		}
 	}
 
-	public Set processEBNF(String data) throws APException {
+	public Set<?> processEBNF(String data) throws APException {
 		Scanner in = new Scanner(data);
-		ArrayList<Token> expression = new ArrayList<Token>();
+		ArrayList<Token<?>> expression = new ArrayList<Token<?>>();
 		in.skipWhiteSpace();
 		boolean operatorExpected = false;
-		// While loop that runs through the string, identifies each character, and fills the ListToken result with tokens
+
 		while (in.hasNext()) {
 
 			if (in.isAlpha()) {
@@ -102,9 +101,9 @@ public class SetResources {
 				}
 				String currentSet = in.nextString();
 				IdentifierInterface.validateIdentifier(currentSet);
-				Set requiredSet = findSet(currentSet);
-				Set tempSet = new Set(requiredSet);				
-				Token<Set> tempToken = new Token<Set>(tempSet, Token.SET_TYPE);
+				Set<?> requiredSet = findSet(currentSet);
+				Set<?> tempSet = new Set<>(requiredSet);				
+				Token<Set<?>> tempToken = new Token<Set<?>>(tempSet, Token.SET_TYPE);
 				expression.add(tempToken);
 				operatorExpected = true;
 			} 
@@ -121,8 +120,8 @@ public class SetResources {
 				if(operatorExpected) {
 					throw new APException("Operator Expected!");
 				}
-				Set tempSet = in.nextSet();
-				Token<Set> tempToken = new Token<Set>(tempSet, Token.SET_TYPE);
+				Set<?> tempSet = in.nextSet();
+				Token<Set<?>> tempToken = new Token<Set<?>>(tempSet, Token.SET_TYPE);
 				expression.add(tempToken);
 				operatorExpected = true;
 			}
@@ -130,8 +129,8 @@ public class SetResources {
 				if(operatorExpected) {
 					throw new APException("Operator Expected!");
 				}
-				Set tempSet = processEBNF(in.nextExpression());
-				Token<Set> tempToken = new Token<Set>(tempSet, Token.SET_TYPE);
+				Set<?> tempSet = processEBNF(in.nextExpression());
+				Token<Set<?>> tempToken = new Token<Set<?>>(tempSet, Token.SET_TYPE);
 				expression.add(tempToken);
 				operatorExpected = true;
 			}
@@ -143,7 +142,7 @@ public class SetResources {
 		}
 
 		expression = shuntingYard(expression);
-		Set answerSet = rpnProcessor(expression);
+		Set<?> answerSet = rpnProcessor(expression);
 		return answerSet;
 	}
 
@@ -162,17 +161,17 @@ public class SetResources {
 		return 0;
 	}
 
-	private Set rpnProcessor(ArrayList<Token> expression) throws APException {
-		Stack<Set> operationStack = new Stack<Set>();
+	private Set<?> rpnProcessor(ArrayList<Token<?>> expression) throws APException {
+		Stack<Set<?>> operationStack = new Stack<Set<?>>();
 
 		for(int i = 0; i < expression.size(); i++) {
-			Token currentToken = expression.get(i);
+			Token<?> currentToken = expression.get(i);
 			if(currentToken.getType() == Token.SET_TYPE) {
-				operationStack.push((Set) expression.get(i).getData());
+				operationStack.push((Set<?>) expression.get(i).getData());
 			}
 			else if(currentToken.getType() == Token.OPERATOR_TYPE) {
-				Set operand2 = operationStack.pop();
-				Set operand1 = operationStack.pop();
+				Set<?> operand2 = operationStack.pop();
+				Set<?> operand1 = operationStack.pop();
 
 				operationStack.push(calculateAnswer(operand1, operand2, expression.get(i)));
 			}
@@ -186,21 +185,21 @@ public class SetResources {
 		}
 	}
 
-	private Set calculateAnswer(Set operand1, Set operand2, Token operator) {
+	private Set<?> calculateAnswer(Set operand1, Set operand2, Token operator) {
 		Set answer = null;
 
 		switch(((String) operator.getData()).charAt(0)) {
 		case '+':
-			answer = operand1.union(operand2);
+			answer = (Set) operand1.union(operand2);
 			break;
 		case '-':
-			answer = operand1.complement(operand2);
+			answer = (Set) operand1.complement(operand2);
 			break;
 		case '*':
-			answer = operand1.intersection(operand2);
+			answer = (Set) operand1.intersection(operand2);
 			break;
 		case '|':
-			answer = operand1.symmetricDiffence(operand2);
+			answer = (Set) operand1.symmetricDiffence(operand2);
 			break;
 		default:
 			answer = null;
@@ -210,9 +209,9 @@ public class SetResources {
 		return answer;
 	}
 
-	private ArrayList<Token> shuntingYard(ArrayList<Token> expression) {
-		ArrayList<Token> outputList = new ArrayList<Token>();
-		Stack<Token> operatorStack = new Stack<Token>();
+	private ArrayList<Token<?>> shuntingYard(ArrayList<Token<?>> expression) {
+		ArrayList<Token<?>> outputList = new ArrayList<Token<?>>();
+		Stack<Token<?>> operatorStack = new Stack<Token<?>>();
 
 		for(int i = 0; i < expression.size(); i++) {
 			if(expression.get(i).getType() == Token.SET_TYPE) {

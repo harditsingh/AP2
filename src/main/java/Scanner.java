@@ -15,32 +15,6 @@ public class Scanner {
 		this.useDelimiter(" /\n/\r/=/+/*/-/|");
 	}
 
-	private void removeNewLines() {
-		String temp = "";
-		for(int i = 0; i<data.length(); i++) {
-			if(data.charAt(i) == '\n' || data.charAt(i) == '\r') {
-				temp += '.';
-			}
-			else {
-				temp += data.charAt(i);
-			}
-		}
-		data = temp;
-	}
-
-	private void toLowercase() {
-		String temp = "";
-		for(int i = 0; i<data.length(); i++) {
-			if(Character.isUpperCase(data.charAt(i))) {
-				temp += Character.toLowerCase(data.charAt(i));
-			}
-			else {
-				temp += data.charAt(i);
-			}
-		}
-		data = temp;
-	}
-
 	public String nextString() {
 		String newString = "";
 
@@ -67,9 +41,9 @@ public class Scanner {
 		String newString = "";
 		int parenthesesCounter = 0;
 
-		if(data.charAt(pointer) == '(') {//11 3 is not a valid number, so stop skipping white spaces when reading a number
+		if(data.charAt(pointer) == '(') {
 			parenthesesCounter++;
-			pointer++;
+			movePointer();
 			while(pointer<data.length()) {
 				if(currentChar() == '(') {
 					parenthesesCounter++;
@@ -86,7 +60,7 @@ public class Scanner {
 					}
 				}
 				newString += data.charAt(pointer);
-				pointer++;
+				movePointer();
 			}
 			movePointer();
 		}
@@ -96,17 +70,17 @@ public class Scanner {
 		return newString;
 	}
 
-	public Set nextSet() throws APException {
+	public Set<?> nextSet() throws APException {
 		String setString = "";
 
 		if(currentChar() == '{') {
 			pointer++;
 			while(pointer < data.length() && currentChar() != '}') {
 				setString += currentChar();
-				pointer++;
+				movePointer();
 			}
 			if(currentChar() == '}') {
-				pointer++;
+				movePointer();
 			}
 			else {
 				throw new APException("The set is incorrect!");
@@ -118,13 +92,10 @@ public class Scanner {
 		return parseNumbers(setString);
 	}
 
-	private Set parseNumbers(String set) throws APException {
+	private Set<?> parseNumbers(String set) throws APException {
 		Scanner scanSet = new Scanner(set);
 		String currentBigInteger = "";
 		Set<BigInteger> newSet = new Set<BigInteger>();
-		boolean readingDigit = true;
-		boolean commaEncountered = false;
-
 		boolean digitExpected = true;
 		boolean digitEnded = false;
 		boolean firstPass = true;
@@ -282,7 +253,7 @@ public class Scanner {
 
 
 
-	public void skipWhiteSpace() {//turn into boolean
+	public void skipWhiteSpace() {
 		while(this.hasNext()) {
 			if(currentChar() != ' ') {
 				break;

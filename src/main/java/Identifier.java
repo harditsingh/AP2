@@ -2,15 +2,10 @@
 public class Identifier implements IdentifierInterface {
 	private StringBuffer name;
 
-
-
 	Identifier(String name) {
 		this.name = new StringBuffer(name);
-
 	}
 
-
-	//get char
 	public String getName() {
 		return name.toString();
 	}
@@ -26,5 +21,4 @@ public class Identifier implements IdentifierInterface {
 		}
 		return false;
 	}
-
 }

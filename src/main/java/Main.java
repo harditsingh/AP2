@@ -12,9 +12,6 @@ public class Main {
 			if(line.equals("exit")) {
 				break;
 			}
-//			else if(line.startsWith("/")) {
-//				continue;
-//			}
 			else if(line.equals("")) {
 				System.out.println("error no statement");
 			}
@@ -27,8 +24,6 @@ public class Main {
 				}
 			}
 		}
-
-
 		consoleInput.close();
 	}
 

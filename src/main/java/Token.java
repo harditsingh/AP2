@@ -1,6 +1,4 @@
 
-import java.util.ArrayList;
-
 public class Token<E> {
 	static final int SET_TYPE = 1;
 	static final int OPERATOR_TYPE = 2;

@@ -40,14 +40,14 @@ public interface IdentifierInterface {
 	}
 
 
-	/**	@precondition - The name should not be empty.
+	/**	@precondition - The StringBuffer object 'name' should not be null.
 	 *  @postcondition - The function returns a String constructed from the the StringBuffer 'name'.
 	 **/
 	String getName();
 
 
 	/**	@precondition - 
-	 *  @postcondition - The Stringbuffer object 'name' is initialized with a new object containing the string passed as a parameter.
+	 *  @postcondition - The StringBuffer object 'name' is initialized with a new object containing the string passed as a parameter.
 	 **/
 	void setName(String name);
 

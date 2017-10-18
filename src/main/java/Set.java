@@ -1,19 +1,30 @@
 
 public class Set<E extends Comparable> implements SetInterface<E> {
-	private List<E> mainList;
-	//Don't add duplicate objects
+	private ListInterface<E> mainList;
 	
-	private Set(List<E> inputList) { // Won't remove, this is for internal usage!
+	private Set(ListInterface<E> inputList) {
 		mainList = inputList;
 	}
+	
+	private List<E> returnList(Set<E> setIn) {
+		Set<E> tempSet = new Set<E>(setIn);
+		ListInterface<E> listIn = new List<E>();
+		while(!tempSet.isEmpty()) {
+			listIn.insert(tempSet.retrieve());
+			tempSet.remove();
+		}
+		return (List<E>) listIn;
+	}
 		
+	
+	
 	public Set() {
 		mainList = new List<E>();
 	}
 	
 	public Set(Set<E> oldSet) {
 		mainList = new List<E>();
-		List<E> copyList = (List<E>) oldSet.mainList.copy();
+		ListInterface<E> copyList = (ListInterface<E>) oldSet.mainList.copy();
 
 		if(copyList.size() > 0) {
 			copyList.goToFirst();
@@ -25,32 +36,38 @@ public class Set<E extends Comparable> implements SetInterface<E> {
 		}
 	}
 	
+	@Override
 	public E retrieve() {
 		mainList.goToFirst();
 		return mainList.retrieve();
 	}
 	
+	@Override
 	public void remove() {
 		mainList.remove();
 	}
 	
+	@Override
 	public boolean isEmpty() {
 		return mainList.isEmpty();
 	}
 
+	@Override
 	public void insert(E element) {
 		if(!mainList.find(element)) {
 			mainList.insert(element);
 		}
 	}
-
-	public void replaceValue(Set newValue) {
-		mainList = (List<E>) newValue.mainList.copy();//return the copy of the list
+	
+	@Override
+	public void replaceValue(SetInterface<E> newValue) {
+		mainList = returnList((Set<E>) newValue).copy();//return the copy of the list
 	}
-
-	public Set<E> union(Set<E> setIn) {
-		List<E> listIn = setIn.mainList;
-		List<E> tempList = (List<E>) mainList.copy();
+	
+	@Override
+	public SetInterface<E> union(SetInterface<E> setIn) {
+		ListInterface<E> listIn = returnList((Set<E>) setIn);
+		ListInterface<E> tempList = (ListInterface<E>) mainList.copy();
 
 		if(listIn.size() > 0) {
 			listIn.goToFirst();
@@ -65,9 +82,10 @@ public class Set<E extends Comparable> implements SetInterface<E> {
 		return new Set<E>(tempList);
 	}
 
-	public Set<E> complement(Set<E> setIn) {
-		List<E> listIn = setIn.mainList;
-		List<E> tempList = (List<E>) mainList.copy();
+	@Override
+	public SetInterface<E> complement(SetInterface<E> setIn) {
+		ListInterface<E> listIn = returnList((Set<E>) setIn);
+		ListInterface<E> tempList = (ListInterface<E>) mainList.copy();
 
 		if(listIn.size() > 0) {
 			listIn.goToFirst();
@@ -82,9 +100,10 @@ public class Set<E extends Comparable> implements SetInterface<E> {
 		return new Set<E>(tempList);
 	}
 
-	public Set<E> intersection(Set<E> setIn) {
-		List<E> listIn = setIn.mainList;
-		List<E> tempList = (List<E>) mainList.copy();
+	@Override
+	public SetInterface<E> intersection(SetInterface<E> setIn) {
+		ListInterface<E> listIn = returnList((Set<E>) setIn);
+		ListInterface<E> tempList = (ListInterface<E>) mainList.copy();
 
 		if(mainList.size() > 0) {
 			mainList.goToFirst();
@@ -100,12 +119,13 @@ public class Set<E extends Comparable> implements SetInterface<E> {
 		return new Set<E>(tempList);
 	}
 
-
-	public Set<E> symmetricDiffence(Set<E> setIn) {
-		Set<E> tempSet = union(setIn);
+	@Override
+	public SetInterface<E> symmetricDiffence(SetInterface<E> setIn) {
+		SetInterface<E> tempSet = union(setIn);
 		tempSet = tempSet.complement(intersection(setIn));
 
 		return tempSet;
 	}
+
 
 }
