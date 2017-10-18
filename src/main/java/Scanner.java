@@ -125,79 +125,54 @@ public class Scanner {
 		boolean readingDigit = true;
 		boolean commaEncountered = false;
 
+		boolean digitExpected = true;
+		boolean digitEnded = false;
+		boolean firstPass = true;
 		scanSet.skipWhiteSpace();
+
 		while(scanSet.hasNext()) {
-			if(readingDigit) {
-
-				if(scanSet.isDigit()) {
-					currentBigInteger += scanSet.currentChar();
-					if(scanSet.currentChar() == '0' && currentBigInteger.equals("0")) {
-						newSet.insert(new BigInteger(currentBigInteger));
-						currentBigInteger = "";
-						readingDigit = false;
-						commaEncountered = true;
-					}
-					scanSet.movePointer();
-					scanSet.skipWhiteSpace();
-				}
-				else if(scanSet.isComma()) {
-					if(!currentBigInteger.equals("")) {
-						newSet.insert(new BigInteger(currentBigInteger));
-						currentBigInteger = "";
-						readingDigit = false;
-						commaEncountered = true;
-					}
-					else {
-						throw new APException("No digit present before comma!");
-					}
-				}
-				else if(scanSet.currentChar() == 'e') {
-					if(!currentBigInteger.equals("")) {
-						newSet.insert(new BigInteger(currentBigInteger));
-						currentBigInteger = "";
-					}
-					readingDigit = false;
-					break;
-				}
-				else if(scanSet.currentChar() == ' ') {
-					scanSet.skipWhiteSpace();
-					if(!currentBigInteger.equals("")) {
-						newSet.insert(new BigInteger(currentBigInteger));
-						currentBigInteger = "";	
-					}
-					readingDigit = false;
-					commaEncountered = true;
+			if(scanSet.isDigit() && !digitEnded) {
+				currentBigInteger += scanSet.currentChar();
+				if(scanSet.currentChar() == '0' && currentBigInteger.equals("0")) {
+					newSet.insert(new BigInteger(currentBigInteger));
+					currentBigInteger = "";
+					digitEnded = true;
 				}
 				else {
-					throw new APException("Invalid Character!");
+					digitEnded = false;
 				}
+				scanSet.movePointer();
+				digitExpected = false;
 			}
-			else if(commaEncountered) {
-				if(scanSet.isComma()) {
-					scanSet.movePointer();
-					scanSet.skipWhiteSpace();
+			else if(scanSet.isComma() && !digitExpected) {
+				scanSet.movePointer();
+				if(!currentBigInteger.equals("")) {
+					newSet.insert(new BigInteger(currentBigInteger));
+					currentBigInteger = "";
 				}
-				else if(scanSet.currentChar() == 'e') {
-					break;
-				}
-				else {
-					throw new APException("No comma present!");
-				}
-
-				if(scanSet.isDigit()) {
-					commaEncountered = false;
-					readingDigit = true;
-				}
-				else if(scanSet.isComma()) {
-					throw new APException("No digit present before comma!");
-				}
-				else if(scanSet.currentChar() == 'e') {
-					throw new APException("Set ends in comma, digit missing!");
-				}
-				else {
-					throw new APException("Invalid Character!");
-				}
+				digitExpected = true;
+				scanSet.skipWhiteSpace();
+				digitEnded = false;
 			}
+			else if(scanSet.currentChar() == ' ' && !digitExpected) {
+				scanSet.skipWhiteSpace();
+				digitEnded = true;
+			}
+			else if(scanSet.currentChar() == 'e' && (!digitExpected || firstPass)) {
+				if(!currentBigInteger.equals("")) {
+					newSet.insert(new BigInteger(currentBigInteger));
+					currentBigInteger = "";
+				}
+				break;
+			}
+			else {
+				throw new APException("Error!");
+			}
+			firstPass = false;
+		}
+		
+		if(digitExpected && !firstPass) {
+			throw new APException("Digit expected!");
 		}
 
 		return newSet;

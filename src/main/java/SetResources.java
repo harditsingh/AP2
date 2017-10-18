@@ -53,7 +53,7 @@ public class SetResources {
 		while(in.hasNext()) {
 			if(in.isAlpha() || in.isDigit()) {//identifier not working properly
 				String currentSet = in.nextString();
-				Identifier.validateIdentifier(currentSet);
+				IdentifierInterface.validateIdentifier(currentSet);
 				in.skipWhiteSpace();
 				if(in.isEquality()) {
 					in.movePointer();
@@ -101,7 +101,7 @@ public class SetResources {
 					throw new APException("error no end of line");
 				}
 				String currentSet = in.nextString();
-				Identifier.validateIdentifier(currentSet);
+				IdentifierInterface.validateIdentifier(currentSet);
 				Set requiredSet = findSet(currentSet);
 				Set tempSet = new Set(requiredSet);				
 				Token<Set> tempToken = new Token<Set>(tempSet, Token.SET_TYPE);
