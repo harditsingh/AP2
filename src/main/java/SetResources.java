@@ -7,13 +7,14 @@ public class SetResources {
 
 	private static final String OPERATOR_TOKENS = "+-|*^";
 
-	HashMap<Identifier, Set<?>> mainHashMap;
+	private HashMap<Identifier, Set<?>> mainHashMap;
 
 	SetResources() {
 		mainHashMap = new HashMap<Identifier, Set<?>>();
 	}
 
-	void printSet(Set<?> currentSet) {
+	// Prints out the contents of the given Set
+	private void printSet(Set<?> currentSet) {
 		Set<?> tempSet = new Set<>(currentSet);
 		
 		while(!tempSet.isEmpty()) {
@@ -26,6 +27,7 @@ public class SetResources {
 		System.out.println();
 	}
 
+	// Returns the set corresponding to the given key
 	private Set<?> findSet(String keyString) throws APException {
 		for(Identifier key: mainHashMap.keySet()){
 			if(key.compareName(keyString)) {
@@ -45,6 +47,7 @@ public class SetResources {
 		mainHashMap.put(new Identifier(name), newValue);		
 	}
 
+	// Processes the input line by line
 	public void processInput(String data) throws APException {
 		Scanner in = new Scanner(data);
 		in.skipWhiteSpace();
@@ -87,7 +90,8 @@ public class SetResources {
 		}
 	}
 
-	public Set<?> processEBNF(String data) throws APException {
+	// Processes the EBNF notation
+	private Set<?> processEBNF(String data) throws APException {
 		Scanner in = new Scanner(data);
 		ArrayList<Token<?>> expression = new ArrayList<Token<?>>();
 		in.skipWhiteSpace();
@@ -146,6 +150,7 @@ public class SetResources {
 		return answerSet;
 	}
 
+	// Given a token in the form of a string, it returns the precedence of this token as int
 	private int setPrecedence(String token) {
 		int precedence = 0;
 
@@ -161,6 +166,7 @@ public class SetResources {
 		return 0;
 	}
 
+	// Using a DoubleStack for RPN, perform the calculations in the TokenList
 	private Set<?> rpnProcessor(ArrayList<Token<?>> expression) throws APException {
 		Stack<Set<?>> operationStack = new Stack<Set<?>>();
 
@@ -185,6 +191,8 @@ public class SetResources {
 		}
 	}
 
+
+	// Performs union, intersection, complement, or symmetric difference set operations, given two sets as operands
 	private Set<?> calculateAnswer(Set operand1, Set operand2, Token operator) {
 		Set answer = null;
 
@@ -204,11 +212,10 @@ public class SetResources {
 		default:
 			answer = null;
 		}
-
-
 		return answer;
 	}
 
+	// Determine each token's type and fill up the outputList so that it's ready for RPN
 	private ArrayList<Token<?>> shuntingYard(ArrayList<Token<?>> expression) {
 		ArrayList<Token<?>> outputList = new ArrayList<Token<?>>();
 		Stack<Token<?>> operatorStack = new Stack<Token<?>>();

@@ -15,6 +15,7 @@ public class Scanner {
 		this.useDelimiter(" /\n/\r/=/+/*/-/|");
 	}
 
+	// Gets the substring from the current position until the next delimiter
 	public String nextString() {
 		String newString = "";
 
@@ -31,12 +32,14 @@ public class Scanner {
 		return newString;
 	}
 
+	// Gets the substring from current position till the end of data
 	public String getStatement() {
 		String tempString = data.substring(pointer);
 		pointer += tempString.length();
 		return tempString;
 	}
 
+	// Extracts expressions in between parentheses
 	public String nextExpression() throws APException {
 		String newString = "";
 		int parenthesesCounter = 0;
@@ -70,6 +73,7 @@ public class Scanner {
 		return newString;
 	}
 
+	// Converts set notation to a Set
 	public Set<?> nextSet() throws APException {
 		String setString = "";
 
@@ -92,6 +96,7 @@ public class Scanner {
 		return parseNumbers(setString);
 	}
 
+	// Parses numbers in the set notation
 	private Set<?> parseNumbers(String set) throws APException {
 		Scanner scanSet = new Scanner(set);
 		String currentBigInteger = "";
@@ -217,7 +222,7 @@ public class Scanner {
 		return (char) -1;
 	}
 
-	boolean hasNext() {
+	public boolean hasNext() {
 		if(pointer<data.length()) {
 			if(data.charAt(pointer) != '\n' && data.charAt(pointer) != '\r') {
 				return true;
@@ -227,7 +232,7 @@ public class Scanner {
 
 	}
 
-	void useDelimiter(String delimiter) {
+	private void useDelimiter(String delimiter) {
 		int i = 0;
 
 		for(int j = 0; j<delimiter.length(); j++) {
@@ -240,7 +245,7 @@ public class Scanner {
 		}
 	}
 
-	boolean notDelimited() {
+	private boolean notDelimited() {
 		for(int i = 0; i<delimiter.length; i++) {
 			if(delimiter[i] != "") {
 				if(data.substring(pointer).startsWith(delimiter[i])) {
@@ -251,8 +256,6 @@ public class Scanner {
 		return true;
 	}
 
-
-
 	public void skipWhiteSpace() {
 		while(this.hasNext()) {
 			if(currentChar() != ' ') {
@@ -261,7 +264,4 @@ public class Scanner {
 			pointer++;
 		}
 	}
-
-
-
 }

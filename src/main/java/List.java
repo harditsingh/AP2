@@ -15,7 +15,6 @@ public class List<E extends Comparable> implements ListInterface<E>{
 			this.prior = prior;
 			this.next = next;
 		}
-
 	}
 
 	private int size;

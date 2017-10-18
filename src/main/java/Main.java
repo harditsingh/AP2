@@ -1,6 +1,6 @@
 
 public class Main {
-	SetResources resources = new SetResources();
+	private SetResources resources = new SetResources();
 
 
 	private void start() {
