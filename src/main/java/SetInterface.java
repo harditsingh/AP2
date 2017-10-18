@@ -8,8 +8,7 @@
  *				   
  *	<dl>
  *		<dt><b>PRE-conditie</b><dd>		-
- *		<dt><b>POST-conditie</b><dd> 	The new Identifer object has the characters
- *										stored in an object of type StringBuffer.
+ *		<dt><b>POST-conditie</b><dd> 	The new SetInterface object initialized and is ready for elements to be inserted.
  * </dl>
  **/
 
