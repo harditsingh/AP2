@@ -8,7 +8,7 @@
  *				   
  *	<dl>
  *		<dt><b>PRE-condition</b><dd>		-
- *		<dt><b>POST-condition</b><dd> 	The new SetInterface object an empty set.
+ *		<dt><b>POST-condition</b><dd> 	The new SetInterface object is an empty set.
  * </dl>
  **/
 
